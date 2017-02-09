@@ -270,16 +270,24 @@ RedmineWikiTabPreview.EditorEvents = (function(Elements, TabEvents) {
  */
 RedmineWikiTabPreview.EditorAutoFocus = (function() {
   var init = function() {
-    focusIssueDescription($('#all_attributes'));
+    focusIssueDescription();
+    injectFocusFunction();
     $('.wiki.editable').each(focusGeneral);
   };
 
   // private
-  var focusIssueDescription = function($div) {
-    var $editLink = $($div.find('.icon-edit').parent());
+  var injectFocusFunction = function() {
+    var $trackerSelect = $('#issue_tracker_id');
+    var onChange = $trackerSelect.attr('onchange')
+        .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject() });');
+    $trackerSelect.attr('onchange', onChange);
+  };
+  var focusIssueDescription = function() {
+    var $editLink = $($('#all_attributes .icon-edit').parent());
     $editLink.on('click', function() {
       $('#issue_description').focus();
     });
+    var $trackerSelect = $('#issue_tracker_id');
   };
 
   var focusGeneral = function() {
@@ -292,7 +300,8 @@ RedmineWikiTabPreview.EditorAutoFocus = (function() {
   };
 
   return {
-    init: init
+    init: init,
+    inject: injectFocusFunction
   };
 })();
 
