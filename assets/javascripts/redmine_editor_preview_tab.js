@@ -280,9 +280,11 @@ RedmineWikiTabPreview.EditorAutoFocus = (function() {
     ['#issue_project_id', '#issue_tracker_id', '#issue_status_id'].forEach(function(id) {
       focusIssueDescription();
       var $select = $(id);
-      var onChange = $select.attr('onchange')
-          .replace(/\)$/, ').done(RedmineWikiTabPreview.EditorAutoFocus.inject);');
-      $select.attr('onchange', onChange);
+      if ($select.length > 0) {
+        var onChange = $select.attr('onchange')
+            .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject(); })');
+        $select.attr('onchange', onChange);
+      }
     });
   };
   var focusIssueDescription = function() {
@@ -290,7 +292,6 @@ RedmineWikiTabPreview.EditorAutoFocus = (function() {
     $editLink.on('click', function() {
       $('#issue_description').focus();
     });
-    var $trackerSelect = $('#issue_tracker_id');
   };
 
   var focusGeneral = function() {
