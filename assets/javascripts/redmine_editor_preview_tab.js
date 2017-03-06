@@ -278,9 +278,10 @@ RedmineWikiTabPreview.EditorAutoFocus = (function() {
   // private
   var injectFocusFunction = function() {
     ['#issue_project_id', '#issue_tracker_id', '#issue_status_id'].forEach(function(id) {
+      focusIssueDescription();
       var $select = $(id);
       var onChange = $select.attr('onchange')
-          .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject() });');
+          .replace(/\)$/, ').done(RedmineWikiTabPreview.EditorAutoFocus.inject);');
       $select.attr('onchange', onChange);
     });
   };
