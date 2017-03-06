@@ -277,10 +277,12 @@ RedmineWikiTabPreview.EditorAutoFocus = (function() {
 
   // private
   var injectFocusFunction = function() {
-    var $trackerSelect = $('#issue_tracker_id');
-    var onChange = $trackerSelect.attr('onchange')
-        .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject() });');
-    $trackerSelect.attr('onchange', onChange);
+    ['#issue_project_id', '#issue_tracker_id', '#issue_status_id'].forEach(function(id) {
+      var $select = $(id);
+      var onChange = $select.attr('onchange')
+          .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject() });');
+      $select.attr('onchange', onChange);
+    });
   };
   var focusIssueDescription = function() {
     var $editLink = $($('#all_attributes .icon-edit').parent());
