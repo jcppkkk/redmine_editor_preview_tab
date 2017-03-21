@@ -226,6 +226,27 @@ RedmineWikiTabPreview.TabEvents = (function(Tab) {
       e.preventDefault();
       Tab.init($(this)).activate();
     });
+    $editor.on('keydown', function(e) {
+      var keyCode = e.keyCode || e.which;
+      var stat = $editor.find('.jstEditor-preview-header li.active a');
+
+      if ((keyCode == 68 && e.ctrlKey) || (keyCode == 69 && e.ctrlKey)) {
+          e.preventDefault();
+          console.log($(stat).data('type'))
+          if ($(stat).data('type') == 'write') {
+              $($editor.find('.jstEditor-preview-header li a')).trigger('click')
+          } else {
+              $(stat).trigger('click')
+          }
+      }
+
+      if (keyCode == 27) {
+          if ($(stat).data('type') == 'preview') {
+              e.preventDefault();
+              $($editor.find('.jstEditor-preview-header li a')).trigger('click')
+          }
+      }
+    });
   };
 
   return {
@@ -386,5 +407,4 @@ $(function() {
     RedmineWikiTabPreview.EditorEvents.init();
     RedmineWikiTabPreview.EditorAutoFocus.init();
   }
-
 });
