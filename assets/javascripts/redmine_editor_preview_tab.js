@@ -226,27 +226,6 @@ RedmineWikiTabPreview.TabEvents = (function(Tab) {
       e.preventDefault();
       Tab.init($(this)).activate();
     });
-    $editor.on('keydown', function(e) {
-      var keyCode = e.keyCode || e.which;
-      var stat = $editor.find('.jstEditor-preview-header li.active a');
-
-      if ((keyCode == 68 && e.ctrlKey) || (keyCode == 69 && e.ctrlKey)) {
-          e.preventDefault();
-          console.log($(stat).data('type'))
-          if ($(stat).data('type') == 'write') {
-              $($editor.find('.jstEditor-preview-header li a')).trigger('click')
-          } else {
-              $(stat).trigger('click')
-          }
-      }
-
-      if (keyCode == 27) {
-          if ($(stat).data('type') == 'preview') {
-              e.preventDefault();
-              $($editor.find('.jstEditor-preview-header li a')).trigger('click')
-          }
-      }
-    });
   };
 
   return {
@@ -291,54 +270,42 @@ RedmineWikiTabPreview.EditorEvents = (function(Elements, TabEvents) {
  */
 RedmineWikiTabPreview.EditorAutoFocus = (function() {
   var init = function() {
-    $('.wiki.editable, #all_attributes').each(focus);
+    focusIssueDescription();
+    injectFocusFunction();
+    $('.wiki.editable').each(focusGeneral);
   };
 
   // private
-
-  var focus = function() {
-    var $this = $(this);
-    var $editLink = $this.find('a:has(img[alt=Edit])');
-    if (focusIssueDescription($this, $editLink)) {
-      return false;
-    }
-    focusGeneral($this, $editLink);
+  var injectFocusFunction = function() {
+    ['#issue_project_id', '#issue_tracker_id', '#issue_status_id'].forEach(function(id) {
+      focusIssueDescription();
+      var $select = $(id);
+      if ($select.length > 0) {
+        var onChange = $select.attr('onchange')
+            .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject(); })');
+        $select.attr('onchange', onChange);
+      }
+    });
+  };
+  var focusIssueDescription = function() {
+    var $editLink = $($('#all_attributes .icon-edit').parent());
+    $editLink.on('click', function() {
+      $('#issue_description').focus();
+    });
   };
 
-  var focusIssueDescription = function($this, $editLink) {
-    if ($this.attr('id') === 'all_attributes') {
-      $editLink.on('click', function() {
-        $('#issue_description_and_toolbar textarea').focus();
-      });
-      return true;
-    }
-    return false;
-  };
-
-  var focusGeneral = function($this, $editLink) {
-    var onclickSuccess = successFunction.toString()
-      .replace(/%s/, '#' + formId($this));
-	if ($editLink.attr('onclick') != null)  
-    {
-      var onclick = $editLink.attr('onclick')
-        .replace(/}/, ', success: ' + onclickSuccess + '}');
-      $editLink.attr('onclick', onclick);
-    }
-  };
-
-  var successFunction = function() {
-    $('%s').find('textarea').focus();
-  };
-
-  var formId = function($this) {
-    if ($this.attr('id') === 'all_attributes') {
-      return 'issue_description';
-    }
-    return $this.attr('id').replace(/notes/, 'form');
+  var focusGeneral = function() {
+    var $div = $(this);
+    var $editLink = $div.find('a.icon-edit');
+    $editLink.on('ajax:success', function(data, status, xhr) {
+      var id = '#' + $div.attr('id').replace(/notes/, 'form');
+      $(id).find('textarea').focus();
+    });
   };
 
   return {
-    init: init
+    init: init,
+    inject: injectFocusFunction
   };
 })();
 
@@ -409,4 +376,5 @@ $(function() {
     RedmineWikiTabPreview.EditorEvents.init();
     RedmineWikiTabPreview.EditorAutoFocus.init();
   }
+
 });
