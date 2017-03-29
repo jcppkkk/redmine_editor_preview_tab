@@ -270,54 +270,31 @@ RedmineWikiTabPreview.EditorEvents = (function(Elements, TabEvents) {
  */
 RedmineWikiTabPreview.EditorAutoFocus = (function() {
   var init = function() {
-    $('.wiki.editable, #all_attributes').each(focus);
+    injectFocusFunction();
   };
 
   // private
-
-  var focus = function() {
-    var $this = $(this);
-    var $editLink = $this.find('a:has(img[alt=Edit])');
-    if (focusIssueDescription($this, $editLink)) {
-      return false;
-    }
-    focusGeneral($this, $editLink);
+  var injectFocusFunction = function() {
+    ['#issue_project_id', '#issue_tracker_id', '#issue_status_id'].forEach(function(id) {
+      focusIssueDescription();
+      var $select = $(id);
+      if ($select.length > 0) {
+        var onChange = $select.attr('onchange')
+            .replace(/\)$/, ').done(function() { $("#issue_description").focus(); RedmineWikiTabPreview.EditorAutoFocus.inject(); })');
+        $select.attr('onchange', onChange);
+      }
+    });
   };
-
-  var focusIssueDescription = function($this, $editLink) {
-    if ($this.attr('id') === 'all_attributes') {
-      $editLink.on('click', function() {
-        $('#issue_description_and_toolbar textarea').focus();
-      });
-      return true;
-    }
-    return false;
-  };
-
-  var focusGeneral = function($this, $editLink) {
-    var onclickSuccess = successFunction.toString()
-      .replace(/%s/, '#' + formId($this));
-	if ($editLink.attr('onclick') != null)  
-    {
-      var onclick = $editLink.attr('onclick')
-        .replace(/}/, ', success: ' + onclickSuccess + '}');
-      $editLink.attr('onclick', onclick);
-    }
-  };
-
-  var successFunction = function() {
-    $('%s').find('textarea').focus();
-  };
-
-  var formId = function($this) {
-    if ($this.attr('id') === 'all_attributes') {
-      return 'issue_description';
-    }
-    return $this.attr('id').replace(/notes/, 'form');
+  var focusIssueDescription = function() {
+    var $editLink = $($('#all_attributes .icon-edit').parent());
+    $editLink.on('click', function() {
+      $('#issue_description').focus();
+    });
   };
 
   return {
-    init: init
+    init: init,
+    inject: injectFocusFunction
   };
 })();
 
