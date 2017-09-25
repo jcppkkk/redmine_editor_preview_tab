@@ -1,0 +1,4 @@
+# Japanese strings go here for Rails i18n
+ja:
+  label_write: 書く
+  label_no_preview: プレビューする内容がありません
