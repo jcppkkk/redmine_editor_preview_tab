@@ -1,4 +1,3 @@
-
 // Namespace
 var RedmineWikiTabPreview = RedmineWikiTabPreview || {};
 
@@ -12,15 +11,15 @@ var RedmineWikiTabPreview = RedmineWikiTabPreview || {};
  */
 
 RedmineWikiTabPreview.Text = RedmineWikiTabPreview.Text || {
-        NO_PREVIEW: 'Nothing to preview',
-        PREVIEW_DIVS: {
-            description: 'Description',
-            notes: 'Notes',
-            preview: 'Preview',
-            text: 'Preview',
-            write: 'Write'
-        }
-    };
+    NO_PREVIEW: 'Nothing to preview',
+    PREVIEW_DIVS: {
+        description: 'Description',
+        notes: 'Notes',
+        preview: 'Preview',
+        text: 'Preview',
+        write: 'Write'
+    }
+};
 
 /**
  * @class Elements
@@ -31,8 +30,8 @@ RedmineWikiTabPreview.Elements = (function(Text) {
     var $textArea;
     var $editor;
     var $buttonsHtml = '<div class="jstEditor-preview-header"><ul>' +
-        '<li class="active"><a href="#" data-type="write">'  + Text.PREVIEW_DIVS.write + '</a></li>' +
-        '<li><a href="#" data-type="preview">'  + Text.PREVIEW_DIVS.preview + '</a></li></ul></div>' +
+        '<li class="active"><a href="#" data-type="write">' + Text.PREVIEW_DIVS.write + '</a></li>' +
+        '<li><a href="#" data-type="preview">' + Text.PREVIEW_DIVS.preview + '</a></li></ul></div>' +
         '</ul></div>';
 
     var init = function(editor) {
@@ -89,7 +88,7 @@ RedmineWikiTabPreview.View = (function(Text) {
         return this;
     };
 
-    var original_preview_html = function(){
+    var original_preview_html = function() {
         return $original_preview
             .find('.preview')
             .html()
@@ -149,11 +148,11 @@ RedmineWikiTabPreview.Ajax = (function(View) {
         View.init($preview, preview).update();
     };
 
-    var textarea = function(){
+    var textarea = function() {
         return $preview.closest('.jstEditor').find('textarea');
     };
 
-    var attachments = function(){
+    var attachments = function() {
         return $("input[name^='attachments']");
     };
 
@@ -384,7 +383,7 @@ RedmineWikiTabPreview.Style = (function() {
 $(function() {
 
     var $preview_links = $('a[accesskey=r]');
-    if($preview_links.length > 0){
+    if ($preview_links.length > 0) {
         // Set styles
         var redmineBackgroundColor = $('#header').css('background-color');
         RedmineWikiTabPreview.Style
